@@ -1,3 +1,4 @@
+Link para relatório: https://few-truffle-7e9.notion.site/Maratona-de-Filmes-2c7083c298f44d20bf85f5e974804fbf
 
 # Maratona de Filmes
 
