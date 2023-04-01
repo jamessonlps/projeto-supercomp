@@ -1,0 +1,12 @@
+TEMPO DE EXECUÇÃO: 37
+TEMPO DE TELA: 17
+FILMES SELECIONADOS: HEURÍSTICA GULOSA
+ID: 58, categoria: 19, starts at: 19, ends at: 0, duration: 5
+ID: 56, categoria: 13, starts at: 1, ends at: 2, duration: 1
+ID: 53, categoria: 16, starts at: 2, ends at: 3, duration: 1
+ID: 64, categoria: 16, starts at: 4, ends at: 5, duration: 1
+ID: 77, categoria: 1, starts at: 6, ends at: 8, duration: 2
+ID: 44, categoria: 5, starts at: 8, ends at: 10, duration: 2
+ID: 49, categoria: 6, starts at: 12, ends at: 14, duration: 2
+ID: 48, categoria: 19, starts at: 14, ends at: 16, duration: 2
+ID: 16, categoria: 15, starts at: 16, ends at: 17, duration: 1

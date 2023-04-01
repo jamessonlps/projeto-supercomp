@@ -1,0 +1,11 @@
+TEMPO DE EXECUÇÃO: 301
+TEMPO DE TELA: 22
+FILMES SELECIONADOS COM ALEATORIEDADE
+ID: 460, categoria: 3, starts at: 9, ends at: 13
+ID: 606, categoria: 13, starts at: 1, ends at: 4
+ID: 672, categoria: 8, starts at: 15, ends at: 18
+ID: 21, categoria: 13, starts at: 22, ends at: 1
+ID: 597, categoria: 15, starts at: 18, ends at: 21
+ID: 466, categoria: 1, starts at: 4, ends at: 7
+ID: 42, categoria: 11, starts at: 7, ends at: 8
+ID: 62, categoria: 1, starts at: 13, ends at: 15

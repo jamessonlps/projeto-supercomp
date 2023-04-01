@@ -1,0 +1,13 @@
+TEMPO DE EXECUÇÃO: 170
+TEMPO DE TELA: 23
+FILMES SELECIONADOS COM ALEATORIEDADE
+ID: 371, categoria: 6, starts at: 10, ends at: 13
+ID: 292, categoria: 16, starts at: 1, ends at: 4
+ID: 97, categoria: 2, starts at: 15, ends at: 18
+ID: 163, categoria: 1, starts at: 19, ends at: 22
+ID: 64, categoria: 8, starts at: 22, ends at: 0
+ID: 315, categoria: 10, starts at: 4, ends at: 7
+ID: 373, categoria: 14, starts at: 13, ends at: 15
+ID: 195, categoria: 1, starts at: 8, ends at: 10
+ID: 185, categoria: 4, starts at: 0, ends at: 1
+ID: 264, categoria: 19, starts at: 18, ends at: 19

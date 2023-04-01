@@ -189,19 +189,22 @@ class Knapsack():
   def plot_results_gulosa(self):
     self._get_results_gulosa()
     
+    fig = plt.figure(figsize=(12, 7))
     plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["exec_time"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.show()
+    plt.savefig("./img/gulosa-filmes-fixo.png")
+    plt.clf()
     
     plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["exec_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.show()
+    plt.savefig("./img/gulosa-categ-fixo.png")
+    plt.clf()
 
 
   def plot_results_aleatoria(self):
@@ -212,21 +215,45 @@ class Knapsack():
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.show()
+    plt.savefig("./img/aleatoria-filmes-fixo.png")
+    plt.clf()
     
     plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["exec_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.show()
+    plt.savefig("./img/aleatoria-categ-fixo.png")
+    plt.clf()
+  
+
+  def plot_results_comparison(self):
+    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["exec_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["exec_time"], c="g", label="Gulosa")
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("./img/compara-filmes-fixo.png")
+    plt.clf()
+
+    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["exec_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["exec_time"], c="g", label="Gulosa")
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/compara-categ-fixo.png")
+    plt.clf()
 
 
   def run(self):
-    self.generate_input_files()
+    # self.generate_input_files()
 
     self.plot_results_gulosa()
     self.plot_results_aleatoria()
+    self.plot_results_comparison()
 
 
 if __name__ == "__main__":

@@ -120,7 +120,7 @@ for (auto &movie : movies)
 }
 ```
 
-Após inputar os dados e ordenorar o vetor de filmes, esse vetor é percorrido e, se o filme começa a partir do início do anterior, ainda há limite disponível para sua categoria e sua duração não *cruza* com nenhum outro filme já selecionado, então esse filme entra para a lista dos selecionados.
+Após inputar os dados e ordenar o vetor de filmes, esse vetor é percorrido e, se o filme começa a partir do início do anterior, ainda há limite disponível para sua categoria e sua duração não *cruza* com nenhum outro filme já selecionado, então esse filme entra para a lista dos selecionados.
 
 **Resultados**
 

@@ -1,0 +1,10 @@
+TEMPO DE EXECUÇÃO: 48
+TEMPO DE TELA: 20
+FILMES SELECIONADOS COM ALEATORIEDADE
+ID: 67, categoria: 3, starts at: 12, ends at: 14
+ID: 80, categoria: 10, starts at: 1, ends at: 4
+ID: 79, categoria: 9, starts at: 17, ends at: 20
+ID: 48, categoria: 1, starts at: 5, ends at: 9
+ID: 73, categoria: 10, starts at: 20, ends at: 22
+ID: 24, categoria: 6, starts at: 22, ends at: 1
+ID: 41, categoria: 6, starts at: 9, ends at: 12

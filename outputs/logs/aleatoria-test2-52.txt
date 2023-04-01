@@ -1,0 +1,14 @@
+TEMPO DE EXECUÇÃO: 240
+TEMPO DE TELA: 24
+FILMES SELECIONADOS COM ALEATORIEDADE
+ID: 329, categoria: 7, starts at: 9, ends at: 13
+ID: 122, categoria: 14, starts at: 2, ends at: 5
+ID: 384, categoria: 5, starts at: 16, ends at: 19
+ID: 78, categoria: 20, starts at: 0, ends at: 2
+ID: 279, categoria: 14, starts at: 19, ends at: 22
+ID: 437, categoria: 11, starts at: 7, ends at: 8
+ID: 209, categoria: 10, starts at: 22, ends at: 0
+ID: 297, categoria: 4, starts at: 13, ends at: 15
+ID: 323, categoria: 16, starts at: 5, ends at: 7
+ID: 222, categoria: 19, starts at: 8, ends at: 9
+ID: 219, categoria: 8, starts at: 15, ends at: 16
