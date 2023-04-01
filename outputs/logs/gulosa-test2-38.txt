@@ -1,4 +1,4 @@
-TEMPO DE EXECUÇÃO: 10
+TEMPO DE EXECUÇÃO: 9
 TEMPO DE TELA: 12
 FILMES SELECIONADOS: HEURÍSTICA GULOSA
 ID: 6, categoria: 4, starts at: 0, ends at: 2, duration: 2

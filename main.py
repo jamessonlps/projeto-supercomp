@@ -205,6 +205,22 @@ class Knapsack():
     plt.grid(True)
     plt.savefig("./img/gulosa-categ-fixo.png")
     plt.clf()
+    
+    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["screen_time"])
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Número de filmes fixo: {self.fix_movie}")
+    plt.grid(True)
+    plt.savefig("./img/gulosa-filmes-fixo-tela.png")
+    plt.clf()
+    
+    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["screen_time"])
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/gulosa-categ-fixo-tela.png")
+    plt.clf()
 
 
   def plot_results_aleatoria(self):
@@ -224,6 +240,22 @@ class Knapsack():
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig("./img/aleatoria-categ-fixo.png")
+    plt.clf()
+    
+    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["screen_time"])
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Número de filmes fixo: {self.fix_movie}")
+    plt.grid(True)
+    plt.savefig("./img/aleatoria-filmes-fixo-tela.png")
+    plt.clf()
+    
+    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["screen_time"])
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/aleatoria-categ-fixo-tela.png")
     plt.clf()
   
 
@@ -245,6 +277,25 @@ class Knapsack():
     plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig("./img/compara-categ-fixo.png")
+    plt.clf()
+
+    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["screen_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["screen_time"], c="g", label="Gulosa")
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("./img/compara-filmes-fixo-tela.png")
+    plt.clf()
+
+    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["screen_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["screen_time"], c="g", label="Gulosa")
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Tempo de tela [h]")
+    plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/compara-categ-fixo-tela.png")
     plt.clf()
 
 
