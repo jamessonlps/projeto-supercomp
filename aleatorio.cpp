@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
   output_json["screen_time"] = total_time;
   output_json["num_movies"] = num_movies;
   output_json["num_categories"] = num_categories;
+  output_json["selected"] = movies_selected.size();
 
   ofstream file(file_name);
   file << output_json.dump();

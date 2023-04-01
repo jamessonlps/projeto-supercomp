@@ -119,7 +119,8 @@ class Knapsack():
       "exec_time": [], 
       "screen_time": [], 
       "num_movies": [], 
-      "num_categories": []
+      "num_categories": [],
+      "selected": []
     }
     for file in files_json_gulosa_t1:
       with open(f"./outputs/gulosa/test1/{file}", "r") as f:
@@ -128,6 +129,7 @@ class Knapsack():
         results["screen_time"].append(data["screen_time"])
         results["num_movies"].append(data["num_movies"])
         results["num_categories"].append(data["num_categories"])
+        results["selected"].append(data["selected"])
     self.results_t1_gulosa = results
 
     # Resultados para o teste 2
@@ -136,7 +138,8 @@ class Knapsack():
       "exec_time": [], 
       "screen_time": [], 
       "num_movies": [], 
-      "num_categories": []
+      "num_categories": [],
+      "selected": []
     }
     for file in files_json_gulosa_t2:
       with open(f"./outputs/gulosa/test2/{file}", "r") as f:
@@ -145,6 +148,7 @@ class Knapsack():
         results["screen_time"].append(data["screen_time"])
         results["num_movies"].append(data["num_movies"])
         results["num_categories"].append(data["num_categories"])
+        results["selected"].append(data["selected"])
     self.results_t2_gulosa = results
 
 
@@ -157,7 +161,8 @@ class Knapsack():
       "exec_time": [], 
       "screen_time": [], 
       "num_movies": [], 
-      "num_categories": []
+      "num_categories": [],
+      "selected": []
     }
     for file in files_json_aleatoria_t1:
       with open(f"./outputs/aleatoria/test1/{file}", "r") as f:
@@ -166,6 +171,7 @@ class Knapsack():
         results["screen_time"].append(data["screen_time"])
         results["num_movies"].append(data["num_movies"])
         results["num_categories"].append(data["num_categories"])
+        results["selected"].append(data["selected"])
     self.results_t1_aleatoria = results
 
     # Resultados para o teste 2
@@ -174,7 +180,8 @@ class Knapsack():
       "exec_time": [], 
       "screen_time": [], 
       "num_movies": [], 
-      "num_categories": []
+      "num_categories": [],
+      "selected": []
     }
     for file in files_json_aleatoria_t2:
       with open(f"./outputs/aleatoria/test2/{file}", "r") as f:
@@ -183,6 +190,7 @@ class Knapsack():
         results["screen_time"].append(data["screen_time"])
         results["num_movies"].append(data["num_movies"])
         results["num_categories"].append(data["num_categories"])
+        results["selected"].append(data["selected"])
     self.results_t2_aleatoria = results
 
 
@@ -222,6 +230,22 @@ class Knapsack():
     plt.savefig("./img/gulosa-categ-fixo-tela.png")
     plt.clf()
 
+    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["selected"])
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Número de filmes fixo: {self.fix_movie}")
+    plt.grid(True)
+    plt.savefig("./img/gulosa-filmes-fixo-selecionados.png")
+    plt.clf()
+    
+    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["selected"])
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/gulosa-categ-fixo-selecionados.png")
+    plt.clf()
+
 
   def plot_results_aleatoria(self):
     self._get_results_aleatoria()
@@ -256,6 +280,22 @@ class Knapsack():
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig("./img/aleatoria-categ-fixo-tela.png")
+    plt.clf()
+
+    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["selected"])
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Número de filmes fixo: {self.fix_movie}")
+    plt.grid(True)
+    plt.savefig("./img/aleatoria-filmes-fixo-selecionados.png")
+    plt.clf()
+    
+    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["selected"])
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/aleatoria-categ-fixo-selecionados.png")
     plt.clf()
   
 
@@ -296,6 +336,25 @@ class Knapsack():
     plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig("./img/compara-categ-fixo-tela.png")
+    plt.clf()
+
+    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["selected"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["selected"], c="g", label="Gulosa")
+    plt.xlabel("Número de categorias")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("./img/compara-filmes-fixo-selecionados.png")
+    plt.clf()
+
+    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["selected"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["selected"], c="g", label="Gulosa")
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Número de filmes selecionados")
+    plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
+    plt.grid(True)
+    plt.savefig("./img/compara-categ-fixo-selecionados.png")
     plt.clf()
 
 
