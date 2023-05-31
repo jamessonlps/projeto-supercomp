@@ -33,6 +33,10 @@ void fetch_categories(map<int, int> &categories, int num_categories);
  */
 void fetch_movies(vector<movie> &movies, int num_movies);
 
+/**
+ * @brief Ordena os filmes por horário de término
+ * @param movies Vetor de filmes
+ */
 void order_movies_by_end_ascending(vector<movie> &movies);
 
 /**
@@ -50,6 +54,10 @@ bool has_time_available(map<int, bool> &times_avaliable, movie m);
  */
 void update_availability_list(map<int, bool> &times_avaliable, movie m);
 
+/**
+ * @brief Inicializa horários disponíveis
+ * @param times_avaliable Dicionário de horários disponíveis
+ */
 void init_availability_list(map<int, bool> &times_avaliable);
 
 #endif // FUNCTIONS_H_
