@@ -10,6 +10,7 @@
 #include <chrono>
 #include <random>
 #include <map>
+#include <bitset>
 
 // Para thrust
 #include <thrust/sort.h>
@@ -176,12 +177,8 @@ void dynamic_program_gpu(vector<movie> &movies, map<int, int> &max_by_cat, int n
   thrust::device_vector<int> movie_combinations_gpu(pow(movies.size(), 2)); // num_movies ^ 2
   thrust::counting_iterator<int> counter(0);                                // num_movies ^ 2 (for movie_combinations_gpu)
 
-  movies_gpu = movies;
-
-  for (int i = 0; i < num_categories; i++)
-  {
-    max_by_cat_gpu[i] = max_by_cat[i + 1];
-  }
+  thrust::copy(movies.begin(), movies.end(), movies_gpu.begin());             // Copy movies to GPU
+  thrust::copy(max_by_cat.begin(), max_by_cat.end(), max_by_cat_gpu.begin()); // Copy max_by_cat to GPU
 
   thrust::transform(
       counter,                                                                                  // Start of input

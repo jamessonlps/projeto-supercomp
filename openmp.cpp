@@ -13,7 +13,7 @@ struct movie_item {
 };
 
 struct exhaustive_return {
-  bitset<64> solution;
+  int total_movies;
   int screen_time;
 };
 
@@ -32,36 +32,48 @@ void fill_movie_time_used(movie_item &movie_item) {
 
 
 vector<exhaustive_return> exhaustive(vector<movie_item> &mis, map<int, int> &max_by_cat, int num_movies, int num_threads) {
-  long int max_solutions = pow(2, num_movies);
+  unsigned long long max_solutions = pow(2, num_movies);
 
   vector<exhaustive_return> solutions;
 
   #pragma omp parallel
   {
-    #pragma omp parallel for num_threads(num_threads)
-    for (long int i = 0; i < max_solutions; i++) {
+    #pragma omp parallel for num_threads(num_threads) shared(max_solutions, solutions)
+    for (unsigned long long i = 0; i < max_solutions; i++) {
       map<int, int> max_by_cat_copy = max_by_cat;
-      bitset<64> solution(i);
-      bitset<24> time_available;
-      int screen_time = 0;
+      bitset<35> solution(i);    // 35 bits (cada bit representa um filme)
+      bitset<24> time_available; // 24 bits (cada bit representa um horário)
+      
+      int screen_time = 0;       // Tempo total de tela da solução
+      int total_movies = 0;      // Número total de filmes na solução
 
+      // Percorremos cada bit da solução.
       for (int j = 0; j < num_movies; j++) {
+        // Se o bit for 1, então o filme está na solução.
         if (solution[j] == 1) {
+          // Verificamos se o filme pode ser adicionado na solução.
           bitset<24> is_addable = mis[j].time_used & time_available;
 
+          // Se o filme não puder ser adicionado, ou se não houver 
+          // mais filmes disponíveis na categoria dele, então não adicionamos.
           if ((is_addable != 0) || (max_by_cat_copy[mis[j].m.category] == 0))
             continue;
+
+          // Se o filme puder ser adicionado, então adicionamos.
           else {
             time_available = time_available | mis[j].time_used;
             max_by_cat_copy[mis[j].m.category] -= 1;
             screen_time += mis[j].m.duration;
+            total_movies += 1;
           }
         }
       }
+
+      // solutions.push_back({ solution, screen_time });
       
       #pragma omp critical
       {
-        solutions.push_back({ solution, screen_time });
+        solutions.push_back({ total_movies, screen_time });
       }
     }
   }
@@ -102,38 +114,38 @@ int main(int argc, char *argv[]) {
   );
 
   auto end_exec = chrono::high_resolution_clock::now();
-  int exec_time = chrono::duration_cast<chrono::milliseconds>(end_exec - start_exec).count();
+  auto exec_time = chrono::duration_cast<chrono::milliseconds>(end_exec - start_exec).count();
 
-  int max_solution = 0;
-  int screen_time = 0;
-  int num_solutions = solutions_response.size();
+  // int max_solution = 0;
+  // int screen_time = 0;
+  // int num_solutions = solutions_response.size();
 
-  // Obtem o indice do elemento com o maior numero de bits setados
-  for (int i = 0; i < num_solutions; i++) {
-    int count = solutions_response[i].solution.count();
-    if (count > max_solution) {
-      max_solution = count;
-      screen_time = solutions_response[i].screen_time;
-    }
-  }
+  // // Obtem o indice do elemento com o maior numero de bits setados
+  // for (int i = 0; i < num_solutions; i++) {
+  //   int count = solutions_response[i].solution.count();
+  //   if (count > max_solution) {
+  //     max_solution = count;
+  //     screen_time = solutions_response[i].screen_time;
+  //   }
+  // }
 
   // Número de filmes
   cout << num_movies << endl;
 
-  // Número de categorias
-  cout << num_categories << endl;
+  // // Número de categorias
+  // cout << num_categories << endl;
 
-  // Número de threads
-  cout << num_threads << endl;
+  // // Número de threads
+  // cout << num_threads << endl;
 
-  // Número de filmes selecionados
-  // cout << movies_selected.size() << endl;
+  // // Número de filmes selecionados
+  // cout << max_solution << endl;
 
-  // Tempo de execução
-  cout << exec_time << endl;
+  // // Tempo de execução
+  // cout << exec_time << endl;
 
-  // Tempo de tela
-  // cout << total_time << endl;
+  // // Tempo de tela
+  // cout << screen_time << endl;
 
   return 0;
 

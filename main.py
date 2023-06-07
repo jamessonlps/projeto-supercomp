@@ -6,10 +6,10 @@ import os
 
 class Knapsack():
   def __init__(self) -> None:
-    self.fix_movie = 50     # Número de filmes no teste 1
-    self.fix_category = 10  # Número de categorias no teste 2
+    self.fix_movie = 25     # Número de filmes no teste 1
+    self.fix_category = 4   # Número de categorias no teste 2
 
-    self.n_movies = np.arange(10, 61, 1) # array com número de filmes
+    self.n_movies = np.arange(10, 31, 1) # array com número de filmes
     self.n_cats = np.arange(5, 26, 1)    # array com número de categorias
 
     self.results_t1_gulosa = None # resultados experimento t1 para gulosa
@@ -365,10 +365,10 @@ class Knapsack():
 
   def run(self):
     # Descomente a linha abaixo para gerar novos inputs
-    # self.generate_input_files()
+    self.generate_input_files()
 
-    self.plot_results(heuristic="gulosa")
-    self.plot_results(heuristic="aleatoria")
+    # self.plot_results(heuristic="gulosa")
+    # self.plot_results(heuristic="aleatoria")
     # self.plot_results_aleatoria()
     # self.plot_results_openmp()
     # self.plot_results_comparison()
