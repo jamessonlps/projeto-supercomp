@@ -3,10 +3,8 @@
 #include <chrono>
 #include <omp.h>
 #include <bitset>
-#include <nlohmann/json.hpp>
 
 using namespace std;
-using json = nlohmann::json;
 
 
 struct movie_item {
@@ -34,7 +32,7 @@ void fill_movie_time_used(movie_item &movie_item) {
 
 
 vector<exhaustive_return> exhaustive(vector<movie_item> &mis, map<int, int> &max_by_cat, int num_movies, int num_threads) {
-  long int max_solutions = min(pow(2, num_movies), pow(2, 62));
+  long int max_solutions = pow(2, num_movies);
 
   vector<exhaustive_return> solutions;
 
@@ -73,12 +71,9 @@ vector<exhaustive_return> exhaustive(vector<movie_item> &mis, map<int, int> &max
 
 
 int main(int argc, char *argv[]) {
-  // string filename = argv[1];
-  // json output;
-
   int num_movies;
   int num_categories;
-  int num_threads = 4;
+  int num_threads = atoi(argv[1]);
 
   cin >> num_movies;
   cin >> num_categories;
@@ -122,20 +117,23 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  cout << "Tempo de execução: " << exec_time << " ms" << endl;
-  cout << "Tempo total de tela: " << screen_time << endl;
-  cout << "Número de filmes: " << num_movies << endl;
-  cout << "Número de threads: " << num_threads << endl;
+  // Número de filmes
+  cout << num_movies << endl;
 
-  // output["exec_time"] = exec_time;
-  // output["screen_time"] = screen_time;
-  // output["num_movies"] = num_movies;
-  // output["num_categories"] = num_categories;
-  // output["num_threads"] = num_threads;
+  // Número de categorias
+  cout << num_categories << endl;
 
-  // ofstream out(filename);
-  // out << output.dump(2);
-  // out.close();
+  // Número de threads
+  cout << num_threads << endl;
+
+  // Número de filmes selecionados
+  // cout << movies_selected.size() << endl;
+
+  // Tempo de execução
+  cout << exec_time << endl;
+
+  // Tempo de tela
+  // cout << total_time << endl;
 
   return 0;
 

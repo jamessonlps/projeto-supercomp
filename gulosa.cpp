@@ -1,9 +1,8 @@
 #include "functions.h"
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <chrono>
 
 using namespace std;
-using json = nlohmann::json;
 
 void gulosa(vector<movie> &solution, int &total_time, int &num_categories, int &num_movies)
 {
@@ -41,8 +40,8 @@ void gulosa(vector<movie> &solution, int &total_time, int &num_categories, int &
 
 int main(int argc, char *argv[])
 {
-  string file_name = argv[1];
-  json output_json;
+  // string file_name = argv[1];
+  // json output_json;
 
   int total_time = 0; // tempo total dos filmes selecionados
   int exec_time = 0;  // tempo de execução do algoritmo
@@ -59,24 +58,20 @@ int main(int argc, char *argv[])
 
   exec_time = chrono::duration_cast<chrono::microseconds>(end_exec - start_exec).count();
 
-  cout << "TEMPO DE EXECUÇÃO: " << exec_time << endl;
-  cout << "TEMPO DE TELA: " << total_time << endl;
-  cout << "FILMES SELECIONADOS: HEURÍSTICA GULOSA" << endl;
+  // Número de filmes
+  cout << num_movies << endl;
 
-  for (auto &i : movies_selected)
-  {
-    cout << "ID: " << i.id << ", categoria: " << i.category << ", starts at: " << i.begin << ", ends at: " << i.end << ", duration: " << i.duration << endl;
-  }
+  // Número de categorias
+  cout << num_categories << endl;
 
-  output_json["exec_time"] = exec_time;
-  output_json["screen_time"] = total_time;
-  output_json["num_movies"] = num_movies;
-  output_json["num_categories"] = num_categories;
-  output_json["selected"] = movies_selected.size();
+  // Número de filmes selecionados
+  cout << movies_selected.size() << endl;
 
-  ofstream file(file_name);
-  file << output_json.dump();
-  file.close();
+  // Tempo de execução
+  cout << exec_time << endl;
+
+  // Tempo de tela
+  cout << total_time << endl;
 
   return 0;
 }

@@ -6,11 +6,11 @@ import os
 
 class Knapsack():
   def __init__(self) -> None:
-    self.fix_movie = 100    # Número de filmes no teste 1
-    self.fix_category = 20  # Número de categorias no teste 2
-    
-    self.n_movies = np.arange(20, 1020, 20) # array com número de filmes
-    self.n_cats = np.arange(2, 30, 1) # array com número de categorias
+    self.fix_movie = 50     # Número de filmes no teste 1
+    self.fix_category = 10  # Número de categorias no teste 2
+
+    self.n_movies = np.arange(10, 61, 1) # array com número de filmes
+    self.n_cats = np.arange(5, 26, 1)    # array com número de categorias
 
     self.results_t1_gulosa = None # resultados experimento t1 para gulosa
     self.results_t2_gulosa = None # resultados experimento t2 para gulosa
@@ -43,74 +43,85 @@ class Knapsack():
     print("Arquivos de input gerados!")
 
 
-  def _generate_gulosa_outputs(self):
+  def _generate_outputs(self, heuristic: str):
     """
-    Executa a heurística gulosa para cada input. São gerados 2
-    outputs: 1 json com as informações principais que são usadas
-    para plotar os gráficos e um arquivo de texto para análise.
+    Gera os arquivos de output para as heurísticas dos testes 1 e 2
+
+    Args:
+      heuristic (str): nome da heurística a ser executada
+
+    Returns:
+      output_dict_t1 (dict): dicionário com os resultados do teste 1
+      output_dict_t2 (dict): dicionário com os resultados do teste 2
     """
+
     # Gera resultados do teste 1 => Número de filmes é fixo
     list_files_t1 = os.listdir("./inputs/test1")
+    
+    output_dict_t1 = {
+      "num_movies": [],
+      "num_categories": [],
+      "num_movies_selected": [],
+      "exec_time": [],
+      "screen_time": []
+    }
+    
     i = 0
     for input_file in list_files_t1:
       with open(f"./inputs/test1/{input_file}") as file:
         proc = subprocess.run(
-          ['./gulosa', f'./outputs/gulosa/test1/gulosa-out-{i}.json'],
+          [f'./{heuristic}'],
           input=file.read(),
           text=True,
           capture_output=True
         )
-      with open(f"./outputs/logs/gulosa-test1-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
       i += 1
+      output_list = [float(x) for x in proc.stdout.strip().split()]
+
+      output_dict_t1["num_movies"].append(output_list[0])
+      output_dict_t1["num_categories"].append(output_list[1])
+      output_dict_t1["num_movies_selected"].append(output_list[2])
+      output_dict_t1["exec_time"].append(output_list[3])
+      output_dict_t1["screen_time"].append(output_list[4])
+
+    self.results_t1_gulosa = output_dict_t1
+    with open(f"./outputs/{heuristic}/{heuristic}-test1-out.json", "w+") as file:
+      json.dump(output_dict_t1, file, indent=2)
     
     # Gera resultados do teste 2 => Número de categorias é fixo
     list_files_t2 = os.listdir("./inputs/test2")
+
+    output_dict_t2 = {
+      "num_movies": [],
+      "num_categories": [],
+      "num_movies_selected": [],
+      "exec_time": [],
+      "screen_time": []
+    }
+
     i = 0
     for input_file in list_files_t2:
       with open(f"./inputs/test2/{input_file}") as file:
         proc = subprocess.run(
-          ['./gulosa', f'./outputs/gulosa/test2/gulosa-out-{i}.json'],
+          [f'./{heuristic}'],
           input=file.read(),
           text=True,
           capture_output=True
         )
-      with open(f"./outputs/logs/gulosa-test2-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
       i += 1
-    print(f"Executados {i} arquivos de input para heurística gulosa")
+      output_list = [float(x) for x in proc.stdout.strip().split()]
 
+      output_dict_t2["num_movies"].append(output_list[0])
+      output_dict_t2["num_categories"].append(output_list[1])
+      output_dict_t2["num_movies_selected"].append(output_list[2])
+      output_dict_t2["exec_time"].append(output_list[3])
+      output_dict_t2["screen_time"].append(output_list[4])
 
-  def _generate_aleatoria_outputs(self):
-    # Gera resultados do teste 1 => Número de filmes é fixo
-    list_files_t1 = os.listdir("./inputs/test1")
-    i = 0
-    for input_file in list_files_t1:
-      with open(f"./inputs/test1/{input_file}") as file:
-        proc = subprocess.run(
-          ['./aleatorio', f'./outputs/aleatoria/test1/aleatoria-out-{i}.json'],
-          input=file.read(),
-          text=True,
-          capture_output=True
-        )
-      with open(f"./outputs/logs/aleatoria-test1-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
-      i += 1
+    self.results_t2_gulosa = output_dict_t2
+    with open(f"./outputs/{heuristic}/{heuristic}-test2-out.json", "w+") as file:
+      json.dump(output_dict_t2, file, indent=2)
     
-    # Gera resultados do teste 2 => Número de categorias é fixo
-    list_files_t2 = os.listdir("./inputs/test2")
-    i = 0
-    for input_file in list_files_t2:
-      with open(f"./inputs/test2/{input_file}") as file:
-        proc = subprocess.run(
-          ['./aleatorio', f'./outputs/aleatoria/test2/aleatoria-out-{i}.json'],
-          input=file.read(),
-          text=True,
-          capture_output=True
-        )
-      with open(f"./outputs/logs/aleatoria-test2-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
-      i += 1
+    return output_dict_t1, output_dict_t2
 
   
   def _generate_openmp_outputs(self):
@@ -143,90 +154,6 @@ class Knapsack():
       with open(f"./outputs/logs/openmp-test2-{i}.txt", "w+") as file:
         file.write(proc.stdout)
       i += 1
-
-
-  def _get_results_gulosa(self):
-    self._generate_gulosa_outputs()
-
-    # Resultados para o teste 1
-    files_json_gulosa_t1 = os.listdir("./outputs/gulosa/test1")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
-      "num_categories": [],
-      "selected": []
-    }
-    for file in files_json_gulosa_t1:
-      with open(f"./outputs/gulosa/test1/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["selected"].append(data["selected"])
-    self.results_t1_gulosa = results
-
-    # Resultados para o teste 2
-    files_json_gulosa_t2 = os.listdir("./outputs/gulosa/test2")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
-      "num_categories": [],
-      "selected": []
-    }
-    for file in files_json_gulosa_t2:
-      with open(f"./outputs/gulosa/test2/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["selected"].append(data["selected"])
-    self.results_t2_gulosa = results
-
-
-  def _get_results_aleatoria(self):
-    self._generate_aleatoria_outputs()
-
-    # Resultados para o teste 1
-    files_json_aleatoria_t1 = os.listdir("./outputs/aleatoria/test1")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
-      "num_categories": [],
-      "selected": []
-    }
-    for file in files_json_aleatoria_t1:
-      with open(f"./outputs/aleatoria/test1/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["selected"].append(data["selected"])
-    self.results_t1_aleatoria = results
-
-    # Resultados para o teste 2
-    files_json_aleatoria_t2 = os.listdir("./outputs/aleatoria/test2")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
-      "num_categories": [],
-      "selected": []
-    }
-    for file in files_json_aleatoria_t2:
-      with open(f"./outputs/aleatoria/test2/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["selected"].append(data["selected"])
-    self.results_t2_aleatoria = results
 
 
   def _get_results_openmp(self):
@@ -271,110 +198,58 @@ class Knapsack():
     self.results_t2_openmp = results
 
 
-  def plot_results_gulosa(self):
-    self._get_results_gulosa()
+  def plot_results(self, heuristic: str):
+    results_t1, results_t2 = self._generate_outputs(heuristic=heuristic)
     
     fig = plt.figure(figsize=(12, 7))
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["exec_time"])
+    plt.scatter(results_t1["num_categories"], results_t1["exec_time"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-filmes-fixo.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-filmes-fixo.png")
     plt.clf()
     
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["exec_time"])
+    plt.scatter(results_t2["num_movies"], results_t2["exec_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-categ-fixo.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-categ-fixo.png")
     plt.clf()
     
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["screen_time"])
+    plt.scatter(results_t1["num_categories"], results_t1["screen_time"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Tempo de tela [h]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-filmes-fixo-tela.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-filmes-fixo-tela.png")
     plt.clf()
     
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["screen_time"])
+    plt.scatter(results_t2["num_movies"], results_t2["screen_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de tela [h]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-categ-fixo-tela.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-categ-fixo-tela.png")
     plt.clf()
 
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["selected"])
+    plt.scatter(results_t1["num_categories"], results_t1["num_movies_selected"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-filmes-fixo-selecionados.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-filmes-fixo-selecionados.png")
     plt.clf()
     
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["selected"])
+    plt.scatter(results_t2["num_movies"], results_t2["num_movies_selected"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/gulosa-categ-fixo-selecionados.png")
+    plt.savefig(f"./img/{heuristic}/{heuristic}-categ-fixo-selecionados.png")
     plt.clf()
 
-
-  def plot_results_aleatoria(self):
-    self._get_results_aleatoria()
-    
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["exec_time"])
-    plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
-    plt.title(f"Número de filmes fixo: {self.fix_movie}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-filmes-fixo.png")
-    plt.clf()
-    
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["exec_time"])
-    plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
-    plt.title(f"Número de categorias fixo: {self.fix_category}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-categ-fixo.png")
-    plt.clf()
-    
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["screen_time"])
-    plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de tela [h]")
-    plt.title(f"Número de filmes fixo: {self.fix_movie}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-filmes-fixo-tela.png")
-    plt.clf()
-    
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["screen_time"])
-    plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de tela [h]")
-    plt.title(f"Número de categorias fixo: {self.fix_category}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-categ-fixo-tela.png")
-    plt.clf()
-
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["selected"])
-    plt.xlabel("Número de categorias")
-    plt.ylabel("Número de filmes selecionados")
-    plt.title(f"Número de filmes fixo: {self.fix_movie}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-filmes-fixo-selecionados.png")
-    plt.clf()
-    
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["selected"])
-    plt.xlabel("Número de filmes")
-    plt.ylabel("Número de filmes selecionados")
-    plt.title(f"Número de categorias fixo: {self.fix_category}")
-    plt.grid(True)
-    plt.savefig("./img/aleatoria-categ-fixo-selecionados.png")
-    plt.clf()
-  
 
   def plot_results_openmp(self):
     self._get_results_openmp()
@@ -489,11 +364,13 @@ class Knapsack():
 
 
   def run(self):
+    # Descomente a linha abaixo para gerar novos inputs
     # self.generate_input_files()
 
-    # self.plot_results_gulosa()
+    self.plot_results(heuristic="gulosa")
+    self.plot_results(heuristic="aleatoria")
     # self.plot_results_aleatoria()
-    self.plot_results_openmp()
+    # self.plot_results_openmp()
     # self.plot_results_comparison()
 
 

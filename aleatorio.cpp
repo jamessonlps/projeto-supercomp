@@ -1,9 +1,10 @@
 #include "functions.h"
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <chrono>
+// #include <nlohmann/json.hpp>
 
 using namespace std;
-using json = nlohmann::json;
+// using json = nlohmann::json;
 
 double prob = 0.25;
 
@@ -71,8 +72,8 @@ void aleatorio(vector<movie> &solution, int &total_time, int &num_categories, in
 
 int main(int argc, char *argv[])
 {
-  string file_name = argv[1];
-  json output_json;
+  // string file_name = argv[1];
+  // json output_json;
 
   int num_movies;     // Número total de filmes
   int num_categories; // Número total de categorias
@@ -90,24 +91,39 @@ int main(int argc, char *argv[])
 
   exec_time = chrono::duration_cast<chrono::microseconds>(end_exec - start_exec).count();
 
-  cout << "TEMPO DE EXECUÇÃO: " << exec_time << endl;
-  cout << "TEMPO DE TELA: " << total_time << endl;
-  cout << "FILMES SELECIONADOS COM ALEATORIEDADE" << endl;
+  // cout << "TEMPO DE EXECUÇÃO: " << exec_time << endl;
+  // cout << "TEMPO DE TELA: " << total_time << endl;
+  // cout << "FILMES SELECIONADOS COM ALEATORIEDADE" << endl;
 
-  for (auto &i : movies_selected)
-  {
-    cout << "ID: " << i.id << ", categoria: " << i.category << ", starts at: " << i.begin << ", ends at: " << i.end << endl;
-  }
+  // for (auto &i : movies_selected)
+  // {
+  //   cout << "ID: " << i.id << ", categoria: " << i.category << ", starts at: " << i.begin << ", ends at: " << i.end << endl;
+  // }
 
-  output_json["exec_time"] = exec_time;
-  output_json["screen_time"] = total_time;
-  output_json["num_movies"] = num_movies;
-  output_json["num_categories"] = num_categories;
-  output_json["selected"] = movies_selected.size();
+  // output_json["exec_time"] = exec_time;
+  // output_json["screen_time"] = total_time;
+  // output_json["num_movies"] = num_movies;
+  // output_json["num_categories"] = num_categories;
+  // output_json["selected"] = movies_selected.size();
 
-  ofstream file(file_name);
-  file << output_json.dump();
-  file.close();
+  // ofstream file(file_name);
+  // file << output_json.dump();
+  // file.close();
+
+  // Número de filmes
+  cout << num_movies << endl;
+
+  // Número de categorias
+  cout << num_categories << endl;
+
+  // Número de filmes selecionados
+  cout << movies_selected.size() << endl;
+
+  // Tempo de execução
+  cout << exec_time << endl;
+
+  // Tempo de tela
+  cout << total_time << endl;
 
   return 0;
 }

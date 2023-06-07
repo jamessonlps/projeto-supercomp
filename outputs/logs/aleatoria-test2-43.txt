@@ -1,9 +1,0 @@
-TEMPO DE EXECUÇÃO: 18
-TEMPO DE TELA: 15
-FILMES SELECIONADOS COM ALEATORIEDADE
-ID: 10, categoria: 7, starts at: 13, ends at: 16
-ID: 3, categoria: 3, starts at: 2, ends at: 5
-ID: 19, categoria: 1, starts at: 6, ends at: 8
-ID: 17, categoria: 3, starts at: 8, ends at: 10
-ID: 8, categoria: 19, starts at: 19, ends at: 21
-ID: 5, categoria: 19, starts at: 16, ends at: 19
