@@ -6,11 +6,13 @@ import os
 
 class Knapsack():
   def __init__(self) -> None:
-    self.fix_movie = 25     # Número de filmes no teste 1
+    self.fix_movie = 21     # Número de filmes no teste 1
     self.fix_category = 4   # Número de categorias no teste 2
+    self.fix_threads = 4    # Número de threads no teste 3
 
     self.n_movies = np.arange(10, 31, 1) # array com número de filmes
-    self.n_cats = np.arange(5, 26, 1)    # array com número de categorias
+    self.n_cats = np.arange(3, 16, 1)    # array com número de categorias
+    self.n_threads = np.arange(1, 9, 1)  # array com número de threads
 
     self.results_t1_gulosa = None # resultados experimento t1 para gulosa
     self.results_t2_gulosa = None # resultados experimento t2 para gulosa
@@ -20,6 +22,7 @@ class Knapsack():
 
     self.results_t1_openmp = None # resultados experimento t1 para openmp
     self.results_t2_openmp = None # resultados experimento t2 para openmp
+    self.results_t3_openmp = None # resultados experimento t3 para openmp
 
 
   def generate_input_files(self) -> None:
@@ -123,79 +126,114 @@ class Knapsack():
     
     return output_dict_t1, output_dict_t2
 
-  
+
   def _generate_openmp_outputs(self):
+    """
+    Gera os arquivos de output para a heurística do teste 1 com openmp
+    """
+
     # Gera resultados do teste 1 => Número de filmes é fixo
     list_files_t1 = os.listdir("./inputs/test1")
+    
+    output_dict_t1 = {
+      "num_movies": [],
+      "num_categories": [],
+      "num_threads": [],
+      "num_movies_selected": [],
+      "exec_time": [],
+      "screen_time": [],
+    }
+
     i = 0
     for input_file in list_files_t1:
       with open(f"./inputs/test1/{input_file}") as file:
         proc = subprocess.run(
-          ['./openmp', f'./outputs/openmp/test1/openmp-out-{i}.json'],
+          [f'./openmp', f"{self.fix_threads}"],
           input=file.read(),
           text=True,
           capture_output=True
         )
-      with open(f"./outputs/logs/openmp-test1-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
       i += 1
+      output_list = [float(x) for x in proc.stdout.strip().split()]
+
+      output_dict_t1["num_movies"].append(output_list[0])
+      output_dict_t1["num_categories"].append(output_list[1])
+      output_dict_t1["num_threads"].append(output_list[2])
+      output_dict_t1["num_movies_selected"].append(output_list[3])
+      output_dict_t1["exec_time"].append(output_list[4])
+      output_dict_t1["screen_time"].append(output_list[5])
+
+    self.results_t1_openmp = output_dict_t1
+    with open(f"./outputs/openmp/openmp-test1-out.json", "w+") as file:
+      json.dump(output_dict_t1, file, indent=2)
     
     # Gera resultados do teste 2 => Número de categorias é fixo
     list_files_t2 = os.listdir("./inputs/test2")
+
+    output_dict_t2 = {
+      "num_movies": [],
+      "num_categories": [],
+      "num_threads": [],
+      "num_movies_selected": [],
+      "exec_time": [],
+      "screen_time": [],
+    }
+
     i = 0
     for input_file in list_files_t2:
       with open(f"./inputs/test2/{input_file}") as file:
         proc = subprocess.run(
-          ['./openmp', f'./outputs/openmp/test2/openmp-out-{i}.json'],
+          [f'./openmp', f"{self.fix_threads}"],
           input=file.read(),
           text=True,
           capture_output=True
         )
-      with open(f"./outputs/logs/openmp-test2-{i}.txt", "w+") as file:
-        file.write(proc.stdout)
       i += 1
+      output_list = [float(x) for x in proc.stdout.strip().split()]
 
+      output_dict_t2["num_movies"].append(output_list[0])
+      output_dict_t2["num_categories"].append(output_list[1])
+      output_dict_t2["num_threads"].append(output_list[2])
+      output_dict_t2["num_movies_selected"].append(output_list[3])
+      output_dict_t2["exec_time"].append(output_list[4])
+      output_dict_t2["screen_time"].append(output_list[5])
 
-  def _get_results_openmp(self):
-    self._generate_openmp_outputs()
+    self.results_t2_openmp = output_dict_t2
+    with open(f"./outputs/openmp/openmp-test2-out.json", "w+") as file:
+      json.dump(output_dict_t2, file, indent=2)
 
-    # Resultados para o teste 1
-    files_json_openmp_t1 = os.listdir("./outputs/openmp/test1")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
+    # Gera resultados do teste 3 => Varia-se número de threads
+    output_dict_t3 = {
+      "num_movies": [],
       "num_categories": [],
-      "num_threads": []
+      "num_threads": [],
+      "num_movies_selected": [],
+      "exec_time": [],
+      "screen_time": [],
     }
-    for file in files_json_openmp_t1:
-      with open(f"./outputs/openmp/test1/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["num_threads"].append(data["num_threads"])
-    self.results_t1_openmp = results
 
-    # Resultados para o teste 2
-    files_json_openmp_t2 = os.listdir("./outputs/openmp/test2")
-    results = {
-      "exec_time": [], 
-      "screen_time": [], 
-      "num_movies": [], 
-      "num_categories": [],
-      "num_threads": []
-    }
-    for file in files_json_openmp_t2:
-      with open(f"./outputs/openmp/test2/{file}", "r") as f:
-        data = json.load(f)
-        results["exec_time"].append(data["exec_time"] / 1000000)
-        results["screen_time"].append(data["screen_time"])
-        results["num_movies"].append(data["num_movies"])
-        results["num_categories"].append(data["num_categories"])
-        results["num_threads"].append(data["num_threads"])
-    self.results_t2_openmp = results
+    for n in self.n_threads:
+      with open(f"./inputs/test2/input-24-movies.txt") as file:
+        proc = subprocess.run(
+          [f'./openmp', f"{n}"],
+          input=file.read(),
+          text=True,
+          capture_output=True
+        )
+      output_list = [float(x) for x in proc.stdout.strip().split()]
+
+      output_dict_t3["num_movies"].append(output_list[0])
+      output_dict_t3["num_categories"].append(output_list[1])
+      output_dict_t3["num_threads"].append(output_list[2])
+      output_dict_t3["num_movies_selected"].append(output_list[3])
+      output_dict_t3["exec_time"].append(output_list[4])
+      output_dict_t3["screen_time"].append(output_list[5])
+
+    self.results_t3_openmp = output_dict_t3
+    with open(f"./outputs/openmp/openmp-test3-out.json", "w+") as file:
+      json.dump(output_dict_t3, file, indent=2)
+
+    return output_dict_t1, output_dict_t2, output_dict_t3
 
 
   def plot_results(self, heuristic: str):
@@ -252,56 +290,63 @@ class Knapsack():
 
 
   def plot_results_openmp(self):
-    self._get_results_openmp()
+    results_t1, results_t2, results_t3 = self._generate_outputs_openmp()
 
-    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["exec_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["exec_time"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.savefig("./img/openmp-filmes-fixo.png")
+    plt.savefig("./img/openmp/openmp-filmes-fixo.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["exec_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["exec_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de execução do algoritmo [s]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/openmp-categ-fixo.png")
+    plt.savefig("./img/openmp/openmp-categ-fixo.png")
     plt.clf()
 
-    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["screen_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["screen_time"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Tempo de tela [h]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
-    plt.savefig("./img/openmp-filmes-fixo-tela.png")
+    plt.savefig("./img/openmp/openmp-filmes-fixo-tela.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["screen_time"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["screen_time"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Tempo de tela [h]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/openmp-categ-fixo-tela.png")
+    plt.savefig("./img/openmp/openmp-categ-fixo-tela.png")
     plt.clf()
 
-    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["selected"], c="r", label="Aleatória")
+    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["selected"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de filmes fixo: {self.fix_movie}") 
     plt.grid(True)
-    plt.savefig("./img/openmp-filmes-fixo-selecionados.png")
+    plt.savefig("./img/openmp/openmp-filmes-fixo-selecionados.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["selected"], c="r", label="Aleatória")
+    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["selected"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
-    plt.savefig("./img/openmp-categ-fixo-selecionados.png")
+    plt.savefig("./img/openmp/openmp-categ-fixo-selecionados.png")
     plt.clf()
 
+    plt.scatter(self.results_t3_openmp["num_threads"], self.results_t3_openmp["exec_time"])
+    plt.xlabel("Número de threads")
+    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.title(f"Execução para {self.fix_movie} filmes e {self.fix_category} categorias")
+    plt.grid(True)
+    plt.savefig("./img/openmp/openmp-threads.png")
+    plt.clf()
 
 
   def plot_results_comparison(self):
@@ -365,10 +410,13 @@ class Knapsack():
 
   def run(self):
     # Descomente a linha abaixo para gerar novos inputs
-    self.generate_input_files()
+    # self.generate_input_files()
 
     # self.plot_results(heuristic="gulosa")
     # self.plot_results(heuristic="aleatoria")
+    # self.plot_results(heuristic="gpu")
+    self._generate_openmp_outputs()
+
     # self.plot_results_aleatoria()
     # self.plot_results_openmp()
     # self.plot_results_comparison()
