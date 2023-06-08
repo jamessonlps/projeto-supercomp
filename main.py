@@ -237,12 +237,18 @@ class Knapsack():
 
 
   def plot_results(self, heuristic: str):
-    results_t1, results_t2 = self._generate_outputs(heuristic=heuristic)
+    # results_t1, results_t2 = self._generate_outputs(heuristic=heuristic)
+
+    with open(f"./outputs/{heuristic}/{heuristic}-test1-out.json") as file:
+      results_t1 = json.load(file)
+
+    with open(f"./outputs/{heuristic}/{heuristic}-test2-out.json") as file:
+      results_t2 = json.load(file)
     
     fig = plt.figure(figsize=(12, 7))
     plt.scatter(results_t1["num_categories"], results_t1["exec_time"])
     plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
     plt.savefig(f"./img/{heuristic}/{heuristic}-filmes-fixo.png")
@@ -250,7 +256,7 @@ class Knapsack():
     
     plt.scatter(results_t2["num_movies"], results_t2["exec_time"])
     plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig(f"./img/{heuristic}/{heuristic}-categ-fixo.png")
@@ -290,11 +296,19 @@ class Knapsack():
 
 
   def plot_results_openmp(self):
-    results_t1, results_t2, results_t3 = self._generate_outputs_openmp()
+
+    with open("./outputs/openmp/openmp-test1-out.json") as file:
+      self.results_t1_openmp = json.load(file)
+    
+    with open("./outputs/openmp/openmp-test2-out.json") as file:
+      self.results_t2_openmp = json.load(file)
+    
+    with open("./outputs/openmp/openmp-test3-out.json") as file:
+      self.results_t3_openmp = json.load(file)
 
     plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["exec_time"])
     plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Número de filmes fixo: {self.fix_movie}")
     plt.grid(True)
     plt.savefig("./img/openmp/openmp-filmes-fixo.png")
@@ -302,7 +316,7 @@ class Knapsack():
 
     plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["exec_time"])
     plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
     plt.grid(True)
     plt.savefig("./img/openmp/openmp-categ-fixo.png")
@@ -324,7 +338,7 @@ class Knapsack():
     plt.savefig("./img/openmp/openmp-categ-fixo-tela.png")
     plt.clf()
 
-    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["selected"])
+    plt.scatter(self.results_t1_openmp["num_categories"], self.results_t1_openmp["num_movies_selected"])
     plt.xlabel("Número de categorias")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de filmes fixo: {self.fix_movie}") 
@@ -332,7 +346,7 @@ class Knapsack():
     plt.savefig("./img/openmp/openmp-filmes-fixo-selecionados.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["selected"])
+    plt.scatter(self.results_t2_openmp["num_movies"], self.results_t2_openmp["num_movies_selected"])
     plt.xlabel("Número de filmes")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número de categorias fixo: {self.fix_category}")
@@ -342,7 +356,7 @@ class Knapsack():
 
     plt.scatter(self.results_t3_openmp["num_threads"], self.results_t3_openmp["exec_time"])
     plt.xlabel("Número de threads")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Execução para {self.fix_movie} filmes e {self.fix_category} categorias")
     plt.grid(True)
     plt.savefig("./img/openmp/openmp-threads.png")
@@ -350,72 +364,102 @@ class Knapsack():
 
 
   def plot_results_comparison(self):
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["exec_time"], c="r", label="Aleatória")
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["exec_time"], c="g", label="Gulosa")
+    results_t1_aleatoria = None
+    results_t1_gulosa = None
+    results_t1_openmp = None
+    results_t1_gpu = None
+
+    results_t2_aleatoria = None
+    results_t2_gulosa = None
+    results_t2_openmp = None
+    results_t2_gpu = None
+
+    # Testes 1
+    with open("./outputs/aleatoria/aleatoria-test1-out.json", "r") as f:
+      results_t1_aleatoria = json.load(f)
+
+    with open("./outputs/gulosa/gulosa-test1-out.json", "r") as f:
+      results_t1_gulosa = json.load(f)
+
+    with open("./outputs/openmp/openmp-test1-out.json", "r") as f:
+      results_t1_openmp = json.load(f)
+
+    with open("./outputs/gpu/gpu-test1-out.json", "r") as f:
+      results_t1_gpu = json.load(f)
+
+    # Testes 2
+    with open("./outputs/aleatoria/aleatoria-test2-out.json", "r") as f:
+      results_t2_aleatoria = json.load(f)
+
+    with open("./outputs/gulosa/gulosa-test2-out.json", "r") as f:
+      results_t2_gulosa = json.load(f)
+    
+    with open("./outputs/openmp/openmp-test2-out.json", "r") as f:
+      results_t2_openmp = json.load(f)
+    
+    with open("./outputs/gpu/gpu-test2-out.json", "r") as f:
+      results_t2_gpu = json.load(f)
+    
+    # Gráfico 1 - Número de categorias vs Tempo de execução
+    plt.scatter(results_t1_aleatoria["num_categories"], results_t1_aleatoria["exec_time"], c="r", label="Aleatória", alpha=0.5)
+    plt.scatter(results_t1_gulosa["num_categories"], results_t1_gulosa["exec_time"], c="g", label="Gulosa", alpha=0.5)
+    plt.scatter(results_t1_openmp["num_categories"], results_t1_openmp["exec_time"], c="b", label="OpenMP", alpha=0.5)
+    plt.scatter(results_t1_gpu["num_categories"], results_t1_gpu["exec_time"], c="y", label="GPU", alpha=0.5)
     plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
     plt.legend()
     plt.grid(True)
     plt.savefig("./img/compara-filmes-fixo.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["exec_time"], c="r", label="Aleatória")
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["exec_time"], c="g", label="Gulosa")
+    # Gráfico 2 - Número de filmes vs Tempo de execução
+    plt.scatter(results_t2_aleatoria["num_movies"], results_t2_aleatoria["exec_time"], c="r", label="Aleatória", alpha=0.5)
+    plt.scatter(results_t2_gulosa["num_movies"], results_t2_gulosa["exec_time"], c="g", label="Gulosa", alpha=0.5)
+    plt.scatter(results_t2_openmp["num_movies"], results_t2_openmp["exec_time"], c="b", label="OpenMP", alpha=0.5)
+    plt.scatter(results_t2_gpu["num_movies"], results_t2_gpu["exec_time"], c="y", label="GPU", alpha=0.5)
     plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de execução do algoritmo [s]")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
     plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
+    plt.legend()
     plt.grid(True)
     plt.savefig("./img/compara-categ-fixo.png")
     plt.clf()
 
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["screen_time"], c="r", label="Aleatória")
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["screen_time"], c="g", label="Gulosa")
-    plt.xlabel("Número de categorias")
-    plt.ylabel("Tempo de tela [h]")
-    plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
+    # Gráfico 3 - Mesmo do 2 mas sem OPENMP porque distorce
+    plt.scatter(results_t2_aleatoria["num_movies"], results_t2_aleatoria["exec_time"], c="r", label="Aleatória", alpha=0.5)
+    plt.scatter(results_t2_gulosa["num_movies"], results_t2_gulosa["exec_time"], c="g", label="Gulosa", alpha=0.5)
+    plt.scatter(results_t2_gpu["num_movies"], results_t2_gpu["exec_time"], c="y", label="GPU", alpha=0.5)
+    plt.xlabel("Número de filmes")
+    plt.ylabel("Tempo de execução do algoritmo [ms]")
+    plt.title(f"Comparação com número de categorias fixo: {self.fix_category} - sem OPENMP")
     plt.legend()
     plt.grid(True)
-    plt.savefig("./img/compara-filmes-fixo-tela.png")
+    plt.savefig("./img/compara-categ-fixo-sem-openmp.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["screen_time"], c="r", label="Aleatória")
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["screen_time"], c="g", label="Gulosa")
-    plt.xlabel("Número de filmes")
-    plt.ylabel("Tempo de tela [h]")
-    plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
-    plt.grid(True)
-    plt.savefig("./img/compara-categ-fixo-tela.png")
-    plt.clf()
-
-    plt.scatter(self.results_t1_aleatoria["num_categories"], self.results_t1_aleatoria["selected"], c="r", label="Aleatória")
-    plt.scatter(self.results_t1_gulosa["num_categories"], self.results_t1_gulosa["selected"], c="g", label="Gulosa")
+    # Gráfico 4 - Número de categorias vs Número de filmes selecionados
+    plt.scatter(results_t1_aleatoria["num_categories"], results_t1_aleatoria["num_movies_selected"], c="r", label="Aleatória", alpha=0.7, edgecolors="black", s=50)
+    plt.scatter(results_t1_gulosa["num_categories"], results_t1_gulosa["num_movies_selected"], c="g", label="Gulosa", alpha=0.7, edgecolors="black", s=100)
+    plt.scatter(results_t1_openmp["num_categories"], results_t1_openmp["num_movies_selected"], c="b", label="OpenMP", alpha=0.7, edgecolors="black", s=150)
+    plt.scatter(results_t1_gpu["num_categories"], results_t1_gpu["num_movies_selected"], c="y", label="GPU", alpha=0.7, edgecolors="black", s=200)
     plt.xlabel("Número de categorias")
     plt.ylabel("Número de filmes selecionados")
-    plt.title(f"Comparação com número de filmes fixo: {self.fix_movie}")
+    plt.title(f"Número total de filmes: {self.fix_movie}")
     plt.legend()
     plt.grid(True)
-    plt.savefig("./img/compara-filmes-fixo-selecionados.png")
+    plt.savefig("./img/compara-filmes-selecionados.png")
     plt.clf()
 
-    plt.scatter(self.results_t2_aleatoria["num_movies"], self.results_t2_aleatoria["selected"], c="r", label="Aleatória")
-    plt.scatter(self.results_t2_gulosa["num_movies"], self.results_t2_gulosa["selected"], c="g", label="Gulosa")
-    plt.xlabel("Número de filmes")
-    plt.ylabel("Número de filmes selecionados")
-    plt.title(f"Comparação com número de categorias fixo: {self.fix_category}")
-    plt.grid(True)
-    plt.savefig("./img/compara-categ-fixo-selecionados.png")
-    plt.clf()
 
 
   def run(self):
     # Descomente a linha abaixo para gerar novos inputs
     # self.generate_input_files()
 
-    # self.plot_results(heuristic="gulosa")
-    # self.plot_results(heuristic="aleatoria")
+    self.plot_results(heuristic="gulosa")
+    self.plot_results(heuristic="aleatoria")
     # self.plot_results(heuristic="gpu")
-    self._generate_openmp_outputs()
 
     # self.plot_results_aleatoria()
     # self.plot_results_openmp()
