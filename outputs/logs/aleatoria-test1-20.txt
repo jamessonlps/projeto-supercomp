@@ -1,9 +1,0 @@
-TEMPO DE EXECUÇÃO: 50
-TEMPO DE TELA: 17
-FILMES SELECIONADOS COM ALEATORIEDADE
-ID: 98, categoria: 22, starts at: 9, ends at: 13
-ID: 31, categoria: 22, starts at: 3, ends at: 5
-ID: 93, categoria: 26, starts at: 14, ends at: 17
-ID: 14, categoria: 19, starts at: 0, ends at: 2
-ID: 77, categoria: 8, starts at: 18, ends at: 22
-ID: 99, categoria: 22, starts at: 7, ends at: 9
