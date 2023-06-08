@@ -439,10 +439,10 @@ class Knapsack():
     plt.clf()
 
     # Gráfico 4 - Número de categorias vs Número de filmes selecionados
-    plt.scatter(results_t1_aleatoria["num_categories"], results_t1_aleatoria["num_movies_selected"], c="r", label="Aleatória", alpha=0.7, edgecolors="black", s=50)
-    plt.scatter(results_t1_gulosa["num_categories"], results_t1_gulosa["num_movies_selected"], c="g", label="Gulosa", alpha=0.7, edgecolors="black", s=100)
-    plt.scatter(results_t1_openmp["num_categories"], results_t1_openmp["num_movies_selected"], c="b", label="OpenMP", alpha=0.7, edgecolors="black", s=150)
-    plt.scatter(results_t1_gpu["num_categories"], results_t1_gpu["num_movies_selected"], c="y", label="GPU", alpha=0.7, edgecolors="black", s=200)
+    plt.scatter(results_t1_gpu["num_categories"], results_t1_gpu["num_movies_selected"], c="y", label="GPU", alpha=0.4, edgecolors="black", s=500)
+    plt.scatter(results_t1_openmp["num_categories"], results_t1_openmp["num_movies_selected"], c="b", label="OpenMP", alpha=0.6, edgecolors="black", s=350)
+    plt.scatter(results_t1_gulosa["num_categories"], results_t1_gulosa["num_movies_selected"], c="g", label="Gulosa", alpha=0.8, edgecolors="black", s=200)
+    plt.scatter(results_t1_aleatoria["num_categories"], results_t1_aleatoria["num_movies_selected"], c="r", label="Aleatória", alpha=1, edgecolors="black", s=50)
     plt.xlabel("Número de categorias")
     plt.ylabel("Número de filmes selecionados")
     plt.title(f"Número total de filmes: {self.fix_movie}")
@@ -457,13 +457,18 @@ class Knapsack():
     # Descomente a linha abaixo para gerar novos inputs
     # self.generate_input_files()
 
+    # As linhas abaixo geram os outputs para cada algoritmo
+    # self._generate_outputs(heuristic="gulosa")
+    # self._generate_outputs(heuristic="aleatoria")
+    # self._generate_openmp_outputs()
+    # self._generate_outputs(heuristic="gpu")
+
+    # As linhas abaixo geram os gráficos
     self.plot_results(heuristic="gulosa")
     self.plot_results(heuristic="aleatoria")
-    # self.plot_results(heuristic="gpu")
-
-    # self.plot_results_aleatoria()
-    # self.plot_results_openmp()
-    # self.plot_results_comparison()
+    self.plot_results(heuristic="gpu")
+    self.plot_results_openmp()
+    self.plot_results_comparison()
 
 
 if __name__ == "__main__":
