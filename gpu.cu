@@ -35,15 +35,11 @@ struct movie
   int duration;
 };
 
-void fetch_categories(map<int, int> &categories, int num_categories)
+struct return_gpu
 {
-  for (int i = 0; i < num_categories; i++)
-  {
-    int limit;
-    cin >> limit;
-    categories[i + 1] = limit;
-  }
-}
+  int num_movies_selected;
+  int screen_time;
+};
 
 void fetch_movies(vector<movie> &movies, int num_movies)
 {
@@ -69,25 +65,36 @@ void fetch_movies(vector<movie> &movies, int num_movies)
   }
 }
 
-struct unop
+struct customized_operator
 {
   int num_movies;
   movie *movies;
   int *max_by_cat;
   int num_categories;
 
-  unop(int _num_movies, movie *_movies, int *_max_by_cat, int _num_categories)
-      : num_movies(_num_movies), movies(_movies), max_by_cat(_max_by_cat), num_categories(_num_categories){};
+  customized_operator(
+      int _num_movies,
+      movie *_movies,
+      int *_max_by_cat,
+      int _num_categories)
+      : num_movies(_num_movies),
+        movies(_movies),
+        max_by_cat(_max_by_cat),
+        num_categories(_num_categories){};
 
-  __device__ int operator()(const int &movies_combination) const
-  { // movies_combination means the movies that are selected
+  __device__ int operator()(const int &movies_combination_id) const
+  { // movies_combination_id means the movies that are selected
 
-    bool time_scheduled[24];                                                            // Store if a time slot is already scheduled
-    vector<int> max_by_cat_copy = vector<int>(max_by_cat, max_by_cat + num_categories); // Copy of max_by_cat
-
+    bool time_scheduled[24]; // Store if a time slot is already scheduled
     for (int t = 0; t < 24; t++)
     {
       time_scheduled[t] = false;
+    }
+
+    int max_by_cat_copy[26]; // Store the max_by_cat in a vector
+    for (int i = 0; i < num_categories; i++)
+    {
+      max_by_cat_copy[i] = max_by_cat[i];
     }
 
     int num_movies_added = 0;
@@ -99,7 +106,7 @@ struct unop
       if (num_movies_added >= 24)
         return -1;
 
-      if ((movies_combination & (1 << i)) && (max_by_cat_copy[movie_i.category - 1] > 0))
+      if ((movies_combination_id & (1 << i)) && (max_by_cat_copy[movie_i.category - 1] > 0))
       {
         if (movie_i.begin > movie_i.end)
         {
@@ -164,42 +171,56 @@ struct unop
  * Then, a vector with all possible movie combinations is created: movie_combinations_gpu.
  * This vector is filled with the number of movies that can be scheduled for each combination.
  *
- * The number of movies that can be scheduled for each combination is calculated by the unary operator unop.
+ * The number of movies that can be scheduled for each combination is calculated by the unary operator customized_operator.
  *
  * @param movies A vector with all movies
  * @param max_by_cat A map with the maximum number of movies per category
  * @param num_categories Number of categories
+ * @param num_movies Number of movies
  */
-void dynamic_program_gpu(vector<movie> &movies, map<int, int> &max_by_cat, int num_categories)
+void dynamic_program_gpu(vector<movie> &movies, vector<int> &max_by_cat, int num_categories, int num_movies, return_gpu &solution)
 {
-  thrust::device_vector<movie> movies_gpu(movies.size());                   // num_movies
-  thrust::device_vector<int> max_by_cat_gpu(num_categories);                // num_categories
-  thrust::device_vector<int> movie_combinations_gpu(pow(movies.size(), 2)); // num_movies ^ 2
-  thrust::counting_iterator<int> counter(0);                                // num_movies ^ 2 (for movie_combinations_gpu)
+  unsigned long int num_combinations = pow(2, num_movies); // Number of possible combinations
 
-  thrust::copy(movies.begin(), movies.end(), movies_gpu.begin());             // Copy movies to GPU
-  thrust::copy(max_by_cat.begin(), max_by_cat.end(), max_by_cat_gpu.begin()); // Copy max_by_cat to GPU
+  thrust::device_vector<movie> movies_gpu(movies);                     // Vector with all movies in GPU
+  thrust::device_vector<int> max_by_cat_gpu(max_by_cat);               // Vector with max_by_cat in GPU
+  thrust::device_vector<int> movie_combinations_gpu(num_combinations); // 2 ^ num_movies
+
+  thrust::counting_iterator<int> counter(0); // 2 ^ num_movies (for movie_combinations_gpu)
 
   thrust::transform(
-      counter,                                                                                  // Start of input
-      counter + pow(movies.size(), 2),                                                          // End of input
-      movie_combinations_gpu.begin(),                                                           // Output
-      unop(movies.size(), movies_gpu.data().get(), max_by_cat_gpu.data().get(), num_categories) // Unary Operator
+      counter,                        // Start of input
+      counter + num_combinations,     // End of input
+      movie_combinations_gpu.begin(), // Output
+      customized_operator(
+          num_movies,                                      // Number of movies
+          thrust::raw_pointer_cast(movies_gpu.data()),     // Pointer to movies in GPU
+          thrust::raw_pointer_cast(max_by_cat_gpu.data()), // Pointer to max_by_cat in GPU
+          num_categories                                   // Number of categories
+          )                                                // Unary Operator
   );
 
-  thrust::host_vector<int> movie_combinations_cpu(movie_combinations_gpu.size());
-  thrust::copy(movie_combinations_gpu.begin(), movie_combinations_gpu.end(), movie_combinations_cpu.begin());
+  // Find the maximum element in movie_combinations_gpu
+  auto max_element_it = thrust::max_element(movie_combinations_gpu.begin(), movie_combinations_gpu.end());
 
-  int max_movies = 0;
-  for (int i = 0; i < movie_combinations_cpu.size(); i++)
+  // Calculate the index of the maximum element
+  int max_element_index = thrust::distance(movie_combinations_gpu.begin(), max_element_it);
+
+  // Obtain the value of the maximum element (number of movies that can be scheduled)
+  int max_element_value = *max_element_it;
+
+  bitset<30> bitset(max_element_index);
+  int screen_time = 0;
+
+  for (int i = 0; i < num_movies; i++)
   {
-    if (movie_combinations_cpu[i] > max_movies)
+    if (bitset[i])
     {
-      max_movies = movie_combinations_cpu[i];
+      screen_time += movies[i].duration;
     }
   }
 
-  cout << "Maximum number of movies: " << max_movies << endl;
+  solution = {max_element_value, screen_time};
 }
 
 int main(int argc, char *argv[])
@@ -210,12 +231,38 @@ int main(int argc, char *argv[])
   cin >> num_movies >> num_categories;
 
   vector<movie> movies(num_movies);
-  map<int, int> max_by_category;
+  vector<int> max_by_category(num_categories);
 
-  fetch_categories(max_by_category, num_categories);
+  for (int i = 0; i < num_categories; i++)
+  {
+    int limit;
+    cin >> limit;
+    max_by_category[i] = limit;
+  }
+
   fetch_movies(movies, num_movies);
 
-  dynamic_program_gpu(movies, max_by_category, num_categories);
+  return_gpu solution;
+
+  auto start_exec = chrono::high_resolution_clock::now();
+  dynamic_program_gpu(movies, max_by_category, num_categories, num_movies, solution);
+  auto end_exec = chrono::high_resolution_clock::now();
+  auto exec_time = chrono::duration_cast<chrono::milliseconds>(end_exec - start_exec).count();
+
+  // Print number of movies
+  cout << num_movies << endl;
+
+  // Print number of categories
+  cout << num_categories << endl;
+
+  // Print number of movies selected
+  cout << solution.num_movies_selected << endl;
+
+  // Print execution time
+  cout << exec_time << endl;
+
+  // Print screen time
+  cout << solution.screen_time << endl;
 
   return 0;
 }
